@@ -1,0 +1,12 @@
+[
+  {"item_name": "Arabica Coffee Beans 1kg", "category": "Beverages", "quantity": 12, "unit": "bags", "reorder_threshold": 5, "daily_burn_rate": 2, "expiry_date": "2027-04-18", "supplier": "Global Bean Co.", "unit_cost": 18.50},
+  {"item_name": "Fresh Whole Milk 1L", "category": "Dairy", "quantity": 4, "unit": "liters", "reorder_threshold": 10, "daily_burn_rate": 3, "expiry_date": "2026-10-23", "supplier": "Local Dairy Farm", "unit_cost": 2.20},
+  {"item_name": "Organic Oat Milk 1L", "category": "Dairy", "quantity": 18, "unit": "liters", "reorder_threshold": 8, "daily_burn_rate": 2, "expiry_date": "2026-12-04", "supplier": "EcoPlant Foods", "unit_cost": 3.50},
+  {"item_name": "Refined White Sugar 1kg", "category": "Pantry", "quantity": 150, "unit": "pieces", "reorder_threshold": 50, "daily_burn_rate": 10, "expiry_date": "2027-10-20", "supplier": "SweetCorp Wholesale", "unit_cost": 1.10},
+  {"item_name": "Eco Paper Cups 8oz", "category": "Supplies", "quantity": 25, "unit": "pieces", "reorder_threshold": 30, "daily_burn_rate": 15, "expiry_date": "2028-10-19", "supplier": "GreenPack Solutions", "unit_cost": 0.15},
+  {"item_name": "Biodegradable Lids 8oz", "category": "Supplies", "quantity": 200, "unit": "pieces", "reorder_threshold": 50, "daily_burn_rate": 15, "expiry_date": "2028-10-19", "supplier": "GreenPack Solutions", "unit_cost": 0.10},
+  {"item_name": "Artisan Sourdough Loaf", "category": "Bakery", "quantity": 2, "unit": "loaves", "reorder_threshold": 6, "daily_burn_rate": 4, "expiry_date": "2026-10-21", "supplier": "Daily Bread Bakery", "unit_cost": 4.00},
+  {"item_name": "Cheddar Cheese Block", "category": "Dairy", "quantity": 9, "unit": "blocks", "reorder_threshold": 5, "daily_burn_rate": 1, "expiry_date": "2026-11-03", "supplier": "Local Dairy Farm", "unit_cost": 6.50},
+  {"item_name": "Black Tea Bags 100pk", "category": "Beverages", "quantity": 3, "unit": "boxes", "reorder_threshold": 5, "daily_burn_rate": 1, "expiry_date": "2027-06-27", "supplier": "Global Bean Co.", "unit_cost": 8.00},
+  {"item_name": "Napkins 500pk", "category": "Supplies", "quantity": 40, "unit": "packs", "reorder_threshold": 10, "daily_burn_rate": 4, "expiry_date": "2029-07-16", "supplier": "GreenPack Solutions", "unit_cost": 5.00}
+]

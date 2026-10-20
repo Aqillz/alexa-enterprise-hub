@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alexa+ Enterprise Inventory</title>
+    <style>
+        :root { --primary: #0f172a; --secondary: #3b82f6; --bg: #f1f5f9; --text: #334155; --border: #cbd5e1; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); display: flex; height: 100vh;}
+        
+        /* Sidebar Guide */
+        .sidebar { width: 280px; background: white; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+        .sidebar h2 { font-size: 15px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-top: 0;}
+        .command-card { background: #f8fafc; border: 1px solid var(--border); padding: 12px; border-radius: 6px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .command-card:hover { border-color: var(--secondary); background: #eff6ff; transform: translateX(4px); }
+        .cmd-title { font-weight: 600; font-size: 13px; color: var(--primary); margin-bottom: 4px; }
+        .cmd-text { font-family: monospace; font-size: 12px; color: #64748b; }
+
+        /* Main Content */
+        .main { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .header h1 { margin: 0; font-size: 22px; color: var(--primary); }
+        .badge { background: #dcfce7; color: #16a34a; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #bbf7d0;}
+
+        /* Grid Layouts */
+        .top-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        /* Panels */
+        .panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .panel h3 { margin-top: 0; font-size: 16px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
+        
+        /* Add Item Form */
+        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; }
+        .form-group input, .form-group select { padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; outline: none; }
+        .form-group input:focus { border-color: var(--secondary); }
+        .btn-success { background: #10b981; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s;}
+        .btn-success:hover { background: #059669; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+        th { font-weight: 600; color: #64748b; text-transform: uppercase; font-size: 11px; }
+        tr:hover { background-color: #f8fafc; }
+        .action-btn { background: var(--secondary); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .action-btn.danger { background: #ef4444; }
+
+        /* Chat */
+        .chat-box { height: 180px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 15px; overflow-y: auto; font-size: 14px; margin-bottom: 15px; }
+        .chat-msg { margin-bottom: 10px; line-height: 1.4; }
+        .chat-user { color: var(--secondary); font-weight: bold; }
+        .chat-agent { color: #10b981; font-weight: bold; }
+        .input-group { display: flex; gap: 10px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+        .send-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- Left Guide Menu -->
+<div class="sidebar">
+    <h2>Agent Command Guide</h2>
+    <p style="font-size: 12px; color: #64748b; margin-top: -5px; margin-bottom: 15px;">Click a card to execute via Chat.</p>
+
+    <div class="command-card" onclick="fillAndSend('Generate executive inventory report')">
+        <div class="cmd-title">📊 Executive Report</div>
+        <div class="cmd-text">"Generate inventory report"</div>
+    </div>
+    <div class="command-card" onclick="fillAndSend('Calculate profit projection at 40% markup')">
+        <div class="cmd-title">📈 Profit Calculator</div>
+        <div class="cmd-text">"Calculate profit projection"</div>
+    </div>
+    <div class="command-card" onclick="fillAndSend('Simulate reorder budget for $150')">
+        <div class="cmd-title">💰 Budget Planning</div>
+        <div class="cmd-text">"Simulate reorder budget $150"</div>
+    </div>
+    <div class="command-card" onclick="fillAndSend('Generate CSV export of inventory')">
+        <div class="cmd-title">📄 Export Data</div>
+        <div class="cmd-text">"Generate CSV export"</div>
+    </div>
+    <div class="command-card" onclick="fillAndSend('Suggest clearance promos for near-expiry items')">
+        <div class="cmd-title">🏷️ Clearance Engine</div>
+        <div class="cmd-text">"Suggest clearance promos"</div>
+    </div>
+</div>
+
+<!-- Main Workspace -->
+<div class="main">
+    <div class="header">
+        <h1>🧠 Alexa+ Enterprise Hub</h1>
+        <span class="badge">● MCP Connected</span>
+    </div>
+
+    <!-- Top Two Panels: Add Item Form & Chat -->
+    <div class="top-grid">
+        <!-- Add Custom Item Form -->
+        <div class="panel">
+            <h3>➕ Add Custom Item to Live Database</h3>
+            <div class="form-grid">
+                <div class="form-group"><label>Item Name</label><input type="text" id="f_name" placeholder="e.g. MCD Burger"></div>
+                <div class="form-group"><label>Category</label><input type="text" id="f_cat" placeholder="e.g. Fast Food"></div>
+                <div class="form-group"><label>Supplier</label><input type="text" id="f_sup" placeholder="e.g. McDonalds"></div>
+                
+                <div class="form-group"><label>Initial Stock</label><input type="number" id="f_qty" value="50"></div>
+                <div class="form-group"><label>Unit Type</label><input type="text" id="f_unit" placeholder="e.g. boxes" value="pieces"></div>
+                <div class="form-group"><label>Unit Cost ($)</label><input type="number" step="0.01" id="f_cost" value="2.50"></div>
+                
+                <div class="form-group"><label>Reorder Alert At</label><input type="number" id="f_thresh" value="10"></div>
+                <div class="form-group"><label>Daily Burn Rate</label><input type="number" id="f_burn" value="5"></div>
+                <div class="form-group"><label>Expiry Date</label><input type="date" id="f_exp" value="2027-12-31"></div>
+            </div>
+            <button class="btn-success" onclick="submitCustomItem()">Add Item via MCP</button>
+        </div>
+
+        <!-- Chat Simulator -->
+        <div class="panel">
+            <h3>Agentic Chat Simulator</h3>
+            <div id="chatLog" class="chat-box">
+                <div class="chat-msg"><span class="chat-agent">Alexa+:</span> System initialized. How can I help you manage your inventory today?</div>
+            </div>
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="Type a command or click a guide card..." onkeydown="if(event.key==='Enter') sendChat()">
+                <button class="send-btn" onclick="sendChat()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Table -->
+    <div class="panel">
+        <h3>Live Inventory (SQLite Database)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item / Category</th>
+                    <th>Stock</th>
+                    <th>Burn Rate</th>
+                    <th>Expiry</th>
+                    <th>Supplier / Cost</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Load the table data on startup
+    async function fetchTable() {
+        let res = await fetch('/api/inventory');
+        let data = await res.json();
+        let tbody = document.getElementById('tableBody');
+        tbody.innerHTML = "";
+        data.items.forEach(i => {
+            tbody.innerHTML += `<tr>
+                <td><strong>${i.item_name}</strong><br><span style="color:#64748b">${i.category}</span></td>
+                <td>${i.quantity} ${i.unit}</td>
+                <td>${i.daily_burn_rate}/day</td>
+                <td>${i.expiry_date}</td>
+                <td>${i.supplier}<br><span style="color:#16a34a">$${i.unit_cost.toFixed(2)}</span></td>
+                <td>
+                    <button class="action-btn" onclick="reorder('${i.item_name}')">Reorder</button>
+                    <button class="action-btn danger" onclick="fillAndSend('Remove item ${i.item_name}')">Delete</button>
+                </td>
+            </tr>`;
+        });
+    }
+
+    // Call the MCP tool via JSON-RPC
+    async function callTool(name, args) {
+        let res = await fetch('/mcp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'mcp-protocol-version': '2025-11-25' },
+            body: JSON.stringify({ jsonrpc: "2.0", method: "tools/call", params: { name: name, arguments: args }, id: Date.now() })
+        });
+        let json = await res.json();
+        return JSON.parse(json.result.content[0].text);
+    }
+
+    // Direct Form Submission Logic for Adding Items
+    async function submitCustomItem() {
+        let name = document.getElementById('f_name').value.trim();
+        if (!name) { alert("Please enter an Item Name!"); return; }
+
+        let payload = {
+            item_name: name,
+            category: document.getElementById('f_cat').value.trim() || "General",
+            quantity: parseInt(document.getElementById('f_qty').value) || 0,
+            unit: document.getElementById('f_unit').value.trim() || "units",
+            reorder_threshold: parseInt(document.getElementById('f_thresh').value) || 5,
+            daily_burn_rate: parseInt(document.getElementById('f_burn').value) || 1,
+            expiry_date: document.getElementById('f_exp').value || "2099-12-31",
+            supplier: document.getElementById('f_sup').value.trim() || "Unknown Vendor",
+            unit_cost: parseFloat(document.getElementById('f_cost').value) || 0.00
+        };
+
+        // Add to Chat Log so the user sees the Agent executed it
+        let log = document.getElementById('chatLog');
+        log.innerHTML += `<div class="chat-msg"><span class="chat-user">System:</span> GUI payload triggered MCP Tool: <code>add_new_item</code> for <b>${name}</b></div>`;
+        
+        let res = await callTool("add_new_item", payload);
+        
+        log.innerHTML += `<div class="chat-msg"><span class="chat-agent">Alexa+:</span> ${res.message}</div>`;
+        log.scrollTop = log.scrollHeight;
+        
+        // Clear the form fields after success
+        document.getElementById('f_name').value = "";
+        document.getElementById('f_cat').value = "";
+        document.getElementById('f_sup').value = "";
+        
+        fetchTable();
+    }
+
+    // Quick Reorder Action
+    async function reorder(name) {
+        await callTool("reorder_item", { item_name: name, quantity: 10 });
+        fetchTable();
+    }
+
+    // Guide Menu Auto-Fill
+    function fillAndSend(text) {
+        document.getElementById('userInput').value = text;
+        sendChat();
+    }
+
+    // Chat Simulator Logic
+    async function sendChat() {
+        let input = document.getElementById('userInput');
+        let log = document.getElementById('chatLog');
+        let txt = input.value.trim();
+        if(!txt) return;
+        
+        log.innerHTML += `<div class="chat-msg"><span class="chat-user">You:</span> ${txt}</div>`;
+        input.value = "";
+        
+        let lower = txt.toLowerCase();
+        let reply = "I couldn't map that to an MCP tool. Try using the Add Item form or clicking a command from the left sidebar.";
+
+        try {
+            if (lower.includes("report") || lower.includes("executive")) {
+                let res = await callTool("generate_inventory_report", {}); reply = res.message;
+            } else if (lower.includes("remove") || lower.includes("delete")) {
+                let itemName = txt.replace(/remove item/i, '').replace(/delete/i, '').trim();
+                let res = await callTool("remove_item", { item_name: itemName }); reply = res.message;
+            } else if (lower.includes("csv") || lower.includes("export")) {
+                let res = await callTool("export_inventory_csv", {}); reply = res.message;
+            } else if (lower.includes("budget") || lower.includes("spend")) {
+                let match = txt.match(/\$?(\d+(\.\d+)?)/);
+                let budget = match ? parseFloat(match[1]) : 100.0;
+                let res = await callTool("simulate_reorder_budget", { max_budget: budget }); reply = res.message;
+            } else if (lower.includes("update") && lower.includes("cost")) {
+                let matchName = txt.match(/cost of (.+) to/i);
+                let matchPrice = txt.match(/to \$?(\d+(\.\d+)?)/i);
+                if (matchName && matchPrice) {
+                    let res = await callTool("update_unit_cost", { item_name: matchName[1].trim(), new_cost: parseFloat(matchPrice[1]) }); reply = res.message;
+                } else {
+                    reply = "Format: Update unit cost of [item] to [price]";
+                }
+            } else if (lower.includes("profit")) {
+                let match = txt.match(/(\d+)%/);
+                let markup = match ? parseFloat(match[1]) : 40.0;
+                let res = await callTool("calculate_potential_profit", { markup_percentage: markup }); reply = res.message;
+            } else if (lower.includes("clearance") || lower.includes("promo")) {
+                let res = await callTool("suggest_clearance_promos", {}); reply = res.message;
+            } else if (lower.includes("purchase order") || lower.includes("po")) {
+                let res = await callTool("generate_purchase_order", { supplier_name: "Local Dairy Farm" }); reply = res.message;
+            }
+        } catch (e) {
+            reply = "Error executing tool. Please ensure the backend is running.";
+        }
+
+        log.innerHTML += `<div class="chat-msg"><span class="chat-agent">Alexa+:</span> ${reply.replace(/\n/g, '<br>')}</div>`;
+        log.scrollTop = log.scrollHeight;
+        fetchTable();
+    }
+
+    fetchTable();
+</script>
+</body>
+</html>
